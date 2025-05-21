@@ -1,0 +1,7 @@
+<odoo>
+  <data>
+
+    <menuitem name="Resize Wizard" id="verts_test.menu_resize_wizard_root" />
+   
+  </data>
+</odoo>

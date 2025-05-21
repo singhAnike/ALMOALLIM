@@ -6,20 +6,22 @@
             <form string="Resizable Wizard" class="o_resizable_modal">
                 <group>
                     <field name="name"/>
-                    <field name="description"/>
                 </group>
                 <footer>
-                    <button string="Confirm" type="object" name="action_confirm" class="btn-primary"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
     </record>
 
     <record id="action_resize_wizard" model="ir.actions.act_window">
-        <field name="name">Resize Wizard</field>
+        <field name="name">Resizable Wizard</field>
         <field name="res_model">resize.wizard</field>
         <field name="view_mode">form</field>
-        <field name="target">new</field> 
+        <field name="target">new</field>
     </record>
+
+    <menuitem id="verts_test.menu_resize_wizard_entry" name="Open Wizard"
+              parent="verts_test.menu_resize_wizard_root"
+              action="action_resize_wizard" sequence="10"/>
 </odoo>

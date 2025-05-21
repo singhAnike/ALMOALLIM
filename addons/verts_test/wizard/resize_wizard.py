@@ -6,3 +6,6 @@ class ResizeWizard(models.TransientModel):
 
     name = fields.Char(string="Name")
     description = fields.Text(string="Description")
+
+    def action_confirm(self):
+        pass
