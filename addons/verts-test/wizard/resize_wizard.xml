@@ -1,0 +1,25 @@
+<odoo>
+    <record id="view_resize_wizard_form" model="ir.ui.view">
+        <field name="name">resize.wizard.form</field>
+        <field name="model">resize.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Resizable Wizard" class="o_resizable_modal">
+                <group>
+                    <field name="name"/>
+                    <field name="description"/>
+                </group>
+                <footer>
+                    <button string="Confirm" type="object" name="action_confirm" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_resize_wizard" model="ir.actions.act_window">
+        <field name="name">Resize Wizard</field>
+        <field name="res_model">resize.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field> 
+    </record>
+</odoo>
