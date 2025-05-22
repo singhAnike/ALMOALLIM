@@ -10,4 +10,12 @@
     ],
     'installable': True,
     'application': True,
+
+    'assets': {
+    'web.assets_backend': [
+        # 'web/static/lib/jquery.ui/jquery-ui.js',
+        'verts_test/static/src/css/resize_wizard.css',
+    ],
+}
+
 }
