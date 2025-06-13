@@ -1,1 +1,0 @@
-from .resize_wizard import ResizeWizard

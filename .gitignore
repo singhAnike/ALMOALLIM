@@ -1,0 +1,22 @@
+# Ignore environment and config files
+.env
+*.conf
+
+# Bytecode and cache
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+.env/
+
+# Docker volumes
+db_data/
+odoo_data/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
