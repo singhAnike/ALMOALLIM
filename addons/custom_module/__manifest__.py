@@ -6,5 +6,9 @@
     """,
     "author": "scidecs",
     "website": "https://www.scidecs.com/en-US/",
+    "data": [
+        "security/ir.model.access.csv",
+        "wizard/product_wizard.xml",
+    ],
 
 }
