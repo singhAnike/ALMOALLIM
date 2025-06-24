@@ -6,6 +6,8 @@
     """,
     "author": "scidecs",
     "website": "https://www.scidecs.com/en-US/",
+    "depends": ['base', 'product', 'stock'],
+
     "data": [
         "security/ir.model.access.csv",
         "wizard/product_wizard.xml",
