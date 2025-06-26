@@ -6,11 +6,12 @@
     """,
     "author": "scidecs",
     "website": "https://www.scidecs.com/en-US/",
-    "depends": ['base', 'product', 'stock'],
+    "depends": ['base', 'product', 'stock', 'loyalty'],
 
     "data": [
         "security/ir.model.access.csv",
         "wizard/product_wizard.xml",
+        "views/loyalty_program_view.xml"
     ],
 
 }
