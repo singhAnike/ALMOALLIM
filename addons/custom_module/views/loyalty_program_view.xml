@@ -5,9 +5,18 @@
         <field name="model">loyalty.program</field>
         <field name="inherit_id" ref="loyalty.loyalty_program_view_form"/>
         <field name="arch" type="xml">
-            <field name="program_type" position="after">
-                <field name="first_time_only"/>
-            </field>
+
+            <!-- Insert a proper line with label and checkbox -->
+            <xpath expr="//field[@name='limit_usage']" position="after">
+                <div class="o_form_label">
+                    <label for="first_time_only"/>
+                </div>
+                <div>
+                    <field name="first_time_only"/>
+                </div>
+            </xpath>
+
+
         </field>
     </record>
 </odoo>
