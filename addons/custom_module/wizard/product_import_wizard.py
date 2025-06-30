@@ -7,6 +7,7 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+
 class ProductImportWizard(models.TransientModel):
     _name = 'product.import.wizard'
     _description = 'Product Import Wizard'
@@ -38,6 +39,12 @@ class ProductImportWizard(models.TransientModel):
 
         return attr, value
 
+    def get_company_by_name(self, name):
+        return self.env['res.company'].sudo().search([('name', 'ilike', name)], limit=1)
+
+    def get_category_by_name(self, name):
+        return self.env['product.category'].sudo().search([('name', 'ilike', name)], limit=1)
+
     def import_data(self):
         if not self.upload_file or not self.filename:
             raise ValidationError(_('Please upload a valid file.'))
@@ -68,6 +75,24 @@ class ProductImportWizard(models.TransientModel):
             template_data = group.iloc[0]
             attribute_lines = []
 
+            # Optional company and category
+            company = False
+            category = False
+
+            if 'Company' in df.columns:
+                company_name = str(template_data.get('Company', '')).strip()
+                if company_name:
+                    company = self.get_company_by_name(company_name)
+                    if not company:
+                        raise ValidationError(_('Company not found: %s') % company_name)
+
+            if 'Product Category' in df.columns:
+                category_name = str(template_data.get('Product Category', '')).strip()
+                if category_name:
+                    category = self.get_category_by_name(category_name)
+                    if not category:
+                        raise ValidationError(_('Product Category not found: %s') % category_name)
+
             # Color
             if 'Color Id' in group.columns:
                 color_vals = group['Color Id'].dropna().unique()
@@ -95,27 +120,37 @@ class ProductImportWizard(models.TransientModel):
                         'attribute_id': size_attr.id,
                         'value_ids': [(6, 0, size_val_ids)]
                     }))
-            
-            # Add this near the top of your import_data method
+
             type_map = {
                 'Goods': 'consu',
                 'Service': 'service',
                 'Combo': 'combo',
-                }
-            
-            # Create product template
-            template = self.env['product.template'].create({
+            }
+
+            # Prepare product.template values
+            template_vals = {
                 'name': f"{template_data.get('Style Id', '').strip()} - {template_data.get('Item Category Code', '').strip()}" if template_data.get('Style ID') or template_data.get('Item Category Code') else 'Unnamed Product',
-                'type': type_map.get(template_data.get('ProductType', 'Goods'), 'consu'), 
+                'type': type_map.get(template_data.get('ProductType', 'Goods'), 'consu'),
                 'default_code': style_id,
                 'list_price': template_data.get('Unit Price Including VAT', 0),
                 'attribute_line_ids': attribute_lines,
-            })
+            }
 
+            if company:
+                template_vals['company_id'] = company.id
+
+            if category:
+                template_vals['categ_id'] = category.id
+
+            # Create the product template
+            template = self.env['product.template'].with_context(
+                force_company=company.id if company else False
+            ).create(template_vals)
+
+            # Update variants
             for variant in template.product_variant_ids:
                 color = variant.product_template_attribute_value_ids.filtered(lambda v: v.attribute_id.name == 'Color').mapped('product_attribute_value_id')
                 size = variant.product_template_attribute_value_ids.filtered(lambda v: v.attribute_id.name == 'Size').mapped('product_attribute_value_id')
-
 
                 match_row = group[
                     ((group['Color Id'] == (color.name if color else None)) | pd.isna(group['Color Id'])) &
@@ -130,9 +165,9 @@ class ProductImportWizard(models.TransientModel):
                     })
 
         return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
                 'title': _('Success'),
                 'message': _('Product templates and variants imported successfully.'),
                 'type': 'success',
@@ -140,5 +175,5 @@ class ProductImportWizard(models.TransientModel):
                 'next': {
                     'type': 'ir.actions.act_window_close'
                 }
-             }
             }
+        }
